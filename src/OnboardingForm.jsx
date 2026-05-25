@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, ArrowLeft, Target, Award, ShieldAlert, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Target, Award, ShieldAlert, Sparkles, BookOpen, Clock } from 'lucide-react';
 
 export default function OnboardingForm({ onComplete }) {
   const [step, setStep] = useState(1);
@@ -22,196 +22,214 @@ export default function OnboardingForm({ onComplete }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onComplete) {
+    if (step === 3) {
       onComplete(formData);
+    } else {
+      nextStep();
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-8 shadow-2xl">
+    <div className="max-w-md mx-auto bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 my-8 shadow-xl animate-fade-in">
       {/* Progress Bar */}
       <div className="mb-8">
-        <div className="flex justify-between text-xs text-zinc-400 mb-2 font-mono">
+        <div className="flex justify-between text-xs font-mono text-zinc-500 mb-2">
           <span>PHASE {step} OF 3</span>
           <span>{Math.round((step / 3) * 100)}% ANALYSIS READY</span>
         </div>
-        <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+        <div className="h-1 bg-zinc-800 rounded-full overflow-hidden">
           <div 
-            className="bg-emerald-500 h-full transition-all duration-300 ease-out"
+            className="h-full bg-emerald-500 transition-all duration-300 ease-out"
             style={{ width: `${(step / 3) * 100}%` }}
           />
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* STEP 1: THE TARGET */}
         {step === 1 && (
-          <div className="space-y-5 animate-fadeIn">
-            <div className="flex items-center gap-3 mb-2">
-              <Target className="text-emerald-400 w-6 h-6" />
-              <h2 className="text-xl font-bold tracking-tight">Define Your Ultimate Vision</h2>
+          <div className="space-y-5 animate-slide-in">
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Target className="h-5 w-5" />
+              <h3 className="text-lg font-semibold text-white">Define Your Ultimate Vision</h3>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">What is your dream career goal?</label>
+              <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">
+                What is your dream career goal?
+              </label>
               <input
+                required
                 type="text"
                 name="goal"
                 value={formData.goal}
                 onChange={handleChange}
                 placeholder="e.g., Google Internship, Startup Founder, AI Engineer"
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-                required
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Current Academic Year</label>
+                <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">
+                  Current Academic Year
+                </label>
                 <select
                   name="year"
                   value={formData.year}
                   onChange={handleChange}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer"
                 >
-                  <option>1st Year</option>
-                  <option>2nd Year</option>
-                  <option>3rd Year</option>
-                  <option>4th Year</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
                 </select>
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Branch / Major</label>
-                <input
-                  type="text"
+                <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">
+                  Branch / Major
+                </label>
+                <select
                   name="branch"
                   value={formData.branch}
                   onChange={handleChange}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-                />
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer"
+                >
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Mechanical">Mechanical</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="Biotechnology">Biotechnology</option>
+                  <option value="Chemical Engineering">Chemical Engineering</option>
+                  <option value="UI/UX Design">UI/UX Design</option>
+                  <option value="Business & Management">Business & Management</option>
+                </select>
               </div>
             </div>
           </div>
         )}
 
-        {/* STEP 2: THE ARSENAL */}
         {step === 2 && (
-          <div className="space-y-5">
-            <div className="flex items-center gap-3 mb-2">
-              <Award className="text-purple-400 w-6 h-6" />
-              <h2 className="text-xl font-bold tracking-tight">Academic & Tech Foundations</h2>
+          <div className="space-y-5 animate-slide-in">
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Award className="h-5 w-5" />
+              <h3 className="text-lg font-semibold text-white">Current Asset Check</h3>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-1">
+                Skills & Tech Stack
+              </label>
+              <p className="text-xs text-zinc-500 mb-2">Separate your entries with commas</p>
+              <input
+                required
+                type="text"
+                name="skills"
+                value={formData.skills}
+                onChange={handleChange}
+                placeholder="e.g., React, Python, Figma, Excel"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-colors"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Current CGPA</label>
+                <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">
+                  Current CGPA
+                </label>
                 <input
+                  required
                   type="number"
-                  name="cgpa"
                   step="0.01"
                   min="0"
                   max="10"
+                  name="cgpa"
                   value={formData.cgpa}
                   onChange={handleChange}
-                  placeholder="0.00"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
-                  required
+                  placeholder="e.g., 8.5"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-600 focus:outline-none focus:border-emerald-500 transition-colors"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Number of Projects</label>
+                <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">
+                  Builds / Projects
+                </label>
                 <input
+                  required
                   type="number"
-                  name="projects"
                   min="0"
+                  name="projects"
                   value={formData.projects}
                   onChange={handleChange}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
                 />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Current Skills (Comma Separated)</label>
-              <textarea
-                name="skills"
-                value={formData.skills}
-                onChange={handleChange}
-                placeholder="e.g., Python, React, C++, Data Structures"
-                rows="3"
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-white focus:outline-none focus:border-purple-500 transition-colors resize-none"
-              />
             </div>
           </div>
         )}
 
-        {/* STEP 3: THE REALITY CHECK */}
         {step === 3 && (
-          <div className="space-y-5">
-            <div className="flex items-center gap-3 mb-2">
-              <ShieldAlert className="text-cyan-400 w-6 h-6" />
-              <h2 className="text-xl font-bold tracking-tight">Daily Commitment Matrix</h2>
+          <div className="space-y-5 animate-slide-in">
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Clock className="h-5 w-5" />
+              <h3 className="text-lg font-semibold text-white">Daily Hustle Audit</h3>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">
-                Daily Coding / Study Hours: <span className="text-cyan-400 font-mono font-bold">{formData.studyHours}h</span>
+              <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">
+                Daily Study / Coding Hours (Outside Classes)
               </label>
               <input
-                type="range"
+                required
+                type="number"
+                min="0"
+                max="24"
                 name="studyHours"
-                min="1"
-                max="16"
                 value={formData.studyHours}
                 onChange={handleChange}
-                className="w-full accent-cyan-400 h-2 bg-zinc-950 rounded-lg cursor-pointer"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
               />
-              <div className="flex justify-between text-xs text-zinc-500 mt-1 font-mono">
-                <span>1 hr</span>
-                <span>8 hrs (Intense)</span>
-                <span>16 hrs (Max)</span>
-              </div>
             </div>
 
-            <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-sm text-zinc-400 flex gap-3 items-start">
-              <Sparkles className="text-yellow-400 w-5 h-5 shrink-0 mt-0.5" />
-              <p>
-                By hitting submit, the engine will parse your data fields through our baseline calibration metrics to map your trajectory gap.
+            <div className="bg-zinc-950 border border-zinc-850 rounded-xl p-4 flex gap-3 items-start">
+              <ShieldAlert className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                <span className="text-amber-500 font-semibold">Note:</span> The system running this calculation values authentic data inputs. Providing overly inflated metrics defaults to a flagged layout response.
               </p>
             </div>
           </div>
         )}
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between items-center pt-4 border-t border-zinc-800 mt-6">
-          {step > 1 ? (
+        {/* Form Action Controls */}
+        <div className="flex gap-4 pt-2 border-t border-zinc-850">
+          {step > 1 && (
             <button
               type="button"
               onClick={prevStep}
-              className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+              className="flex items-center justify-center gap-2 border border-zinc-800 hover:border-zinc-700 bg-zinc-950 text-zinc-300 hover:text-white px-4 py-3 rounded-xl transition-all duration-200 font-medium"
             >
-              <ArrowLeft w={4} h={4} /> Back
-            </button>
-          ) : (
-            <div />
-          )}
-
-          {step < 3 ? (
-            <button
-              type="button"
-              onClick={nextStep}
-              className="bg-zinc-800 hover:bg-zinc-700 text-white font-medium text-sm px-5 py-2.5 rounded-xl flex items-center gap-2 transition-colors ml-auto"
-            >
-              Continue <ArrowRight w={4} h={4} />
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold text-sm px-6 py-2.5 rounded-xl flex items-center gap-2 transition-shadow shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] ml-auto"
-            >
-              Generate Reality Mirror ➔
+              <ArrowLeft className="h-4 w-4" />
             </button>
           )}
+          
+          <button
+            type="submit"
+            className="flex-1 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold px-6 py-3 rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/10 hover:shadow-emerald-500/20"
+          >
+            {step === 3 ? (
+              <>
+                <span>Execute Run Analysis</span>
+                <Sparkles className="h-4 w-4" />
+              </>
+            ) : (
+              <>
+                <span>Continue Tracker Setup</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
         </div>
       </form>
     </div>
