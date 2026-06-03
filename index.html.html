@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>futuremirror</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg-primary: #0B0F19;
+      --bg-card: #1E293B;
+      --accent-neon: #00E5FF;
+      --text-muted: #94A3B8;
+      --text-primary: #FFFFFF;
+      --border-color: rgba(148, 163, 184, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: rgba(11, 15, 25, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-logo span {
+      color: var(--accent-neon);
+    }
+
+    .nav-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--accent-neon);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .nav-indicator::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-neon);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-neon);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; box-shadow: 0 0 8px var(--accent-neon); }
+      50% { opacity: 0.5; box-shadow: 0 0 2px var(--accent-neon); }
+      100% { opacity: 1; box-shadow: 0 0 8px var(--accent-neon); }
+    }
+
+    .main-layout {
+      display: flex;
+      flex: 1;
+    }
+
+    .side-track {
+      width: 80px;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 0;
+      gap: 1.5rem;
+    }
+
+    .view-toggle {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      font-size: 1.5rem;
+    }
+
+    .view-toggle:hover {
+      color: var(--text-primary);
+      background-color: rgba(30, 41, 59, 0.5);
+    }
+
+    .view-toggle.active {
+      color: var(--accent-neon);
+      background-color: rgba(0, 229, 255, 0.1);
+      box-shadow: inset 2px 0 0 var(--accent-neon);
+    }
+
+    .workspace {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .dashboard-grid.featured {
+      grid-template-columns: 1fr;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Card Styles */
+    .status-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .status-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 229, 255, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .card-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-trend {
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .trend-up { color: #4ADE80; }
+    .trend-down { color: #F87171; }
+    .trend-neutral { color: var(--text-muted); }
+
+    /* Reality Index Specific */
+    .reality-index-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .progress-track {
+      height: 8px;
+      background-color: rgba(148, 163, 184, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--accent-neon);
+      box-shadow: 0 0 10px var(--accent-neon);
+      transition: width 1s ease-in-out;
+    }
+
+    .metrics-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-muted);
+      text-align: center;
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+    }
+  </style>
+
+  <!-- React & ReactDOM (UMD versions) via CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel Standalone to parse JSX in the browser -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <!-- Phosphor Icons (Alternative to Lucide for standalone) -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- Hooks ---
+    function useMetrics() {
+      const [metrics, setMetrics] = useState({
+        alignmentScore: 87.5,
+        activeTimelines: 12,
+        completionRate: 64.2,
+        systemLoad: 42,
+        history: []
+      });
+      const [isLoading, setIsLoading] = useState(true);
+
+      useEffect(() => {
+        const initTimer = setTimeout(() => {
+          setIsLoading(false);
+        }, 800);
+
+        const interval = setInterval(() => {
+          setMetrics(prev => {
+            const scoreShift = (Math.random() - 0.5) * 2;
+            const newScore = Math.min(100, Math.max(0, prev.alignmentScore + scoreShift));
+            
+            const loadShift = Math.floor((Math.random() - 0.5) * 10);
+            const newLoad = Math.min(100, Math.max(0, prev.systemLoad + loadShift));
+
+            const history = [...prev.history, newScore].slice(-20);
+
+            return {
+              ...prev,
+              alignmentScore: Number(newScore.toFixed(1)),
+              systemLoad: newLoad,
+              history
+            };
+          });
+        }, 3000);
+
+        return () => {
+          clearTimeout(initTimer);
+          clearInterval(interval);
+        };
+      }, []);
+
+      return { metrics, isLoading };
+    }
+
+    // --- Components ---
+    const StatusCard = ({ title, value, unit = '', trend, trendValue, iconClass, empty = false }) => {
+      if (empty || value === null || value === undefined) {
+        return (
+          <div className="status-card">
+            <div className="card-header">
+              <span className="card-title">{title}</span>
+              {iconClass && <i className={`${iconClass} ph-lg`} style={{ color: 'var(--text-muted)' }}></i>}
+            </div>
+            <div className="empty-state" style={{ padding: '1rem', border: 'none' }}>
+              <span style={{ fontSize: '0.875rem' }}>No data available</span>
+            </div>
+          </div>
+        );
+      }
+
+      const renderTrendIcon = () => {
+        if (trend === 'up') return <i className="ph ph-trend-up"></i>;
+        if (trend === 'down') return <i className="ph ph-trend-down"></i>;
+        return <i className="ph ph-minus"></i>;
+      };
+
+      return (
+        <div className="status-card">
+          <div className="card-header">
+            <span className="card-title">{title}</span>
+            {iconClass && <i className={`${iconClass} ph-lg`} style={{ color: 'var(--accent-neon)' }}></i>}
+          </div>
+          <div className="card-value">
+            {value}
+            <span style={{ fontSize: '1rem', color: 'var(--text-muted)', marginLeft: '4px' }}>
+              {unit}
+            </span>
+          </div>
+          {trendValue && (
+            <div className={`card-trend trend-${trend}`}>
+              {renderTrendIcon()}
+              <span>{trendValue}% from last cycle</span>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const RealityIndex = ({ score, history }) => {
+      const hasHistory = history && history.length > 0;
+
+      return (
+        <div className="status-card reality-index-container">
+          <div className="card-header" style={{ marginBottom: 0 }}>
+            <span className="card-title" style={{ color: 'var(--accent-neon)' }}>
+              Reality Index & Alignment Tracker
+            </span>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent-neon)' }}></span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Live Sync</span>
+            </div>
+          </div>
+          
+          <div className="metrics-row">
+            <div>
+              <div style={{ fontSize: '3rem', fontWeight: 700, lineHeight: 1 }}>
+                {score}<span style={{ fontSize: '1.5rem', color: 'var(--text-muted)' }}>%</span>
+              </div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                Current Alignment Variance
+              </div>
+            </div>
+            
+            {hasHistory ? (
+              <div style={{ display: 'flex', alignItems: 'flex-end', height: '60px', gap: '4px' }}>
+                {history.map((val, idx) => {
+                  const height = `${val}%`;
+                  const isRecent = idx === history.length - 1;
+                  return (
+                    <div 
+                      key={idx} 
+                      style={{ 
+                        width: '6px', 
+                        height, 
+                        backgroundColor: isRecent ? 'var(--accent-neon)' : 'var(--text-muted)',
+                        opacity: isRecent ? 1 : 0.4 + (idx / history.length) * 0.4,
+                        borderRadius: '2px 2px 0 0',
+                        transition: 'height 0.3s ease'
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Gathering mapping data...</div>
+            )}
+          </div>
+
+          <div className="progress-track">
+            <div className="progress-fill" style={{ width: `${score}%` }}></div>
+          </div>
+        </div>
+      );
+    };
+
+    const DashboardView = () => {
+      const { metrics, isLoading } = useMetrics();
+
+      if (isLoading) {
+        return (
+          <div className="empty-state">
+            <div style={{ width: '40px', height: '40px', border: '3px solid var(--border-color)', borderTopColor: 'var(--accent-neon)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+            <p style={{ marginTop: '1rem' }}>Initializing Matrix Connection...</p>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          </div>
+        );
+      }
+
+      return (
+        <div className="dashboard-container">
+          <div className="dashboard-grid featured">
+            <RealityIndex score={metrics.alignmentScore} history={metrics.history} />
+          </div>
+
+          <div className="dashboard-grid">
+            <StatusCard 
+              title="Active Timelines" 
+              value={metrics.activeTimelines} 
+              iconClass="ph ph-clock"
+              trend="up"
+              trendValue="8.4"
+            />
+            <StatusCard 
+              title="Completion Rate" 
+              value={metrics.completionRate} 
+              unit="%"
+              iconClass="ph ph-check-circle"
+              trend="down"
+              trendValue="1.2"
+            />
+            <StatusCard 
+              title="System Load" 
+              value={metrics.systemLoad} 
+              unit="%"
+              iconClass="ph ph-cpu"
+              trend="neutral"
+              trendValue="0.0"
+            />
+            <StatusCard 
+              title="Anomalies Detected" 
+              value={null} 
+              empty={true}
+            />
+          </div>
+        </div>
+      );
+    };
+
+    function App() {
+      const [activeView, setActiveView] = useState('dashboard');
+
+      return (
+        <div className="app-container">
+          <header className="top-nav">
+            <div className="brand-logo">
+              future<span>mirror</span>
+            </div>
+            <div className="nav-indicator">
+              System Aligned
+            </div>
+          </header>
+          
+          <div className="main-layout">
+            <aside className="side-track">
+              <button 
+                className={`view-toggle ${activeView === 'dashboard' ? 'active' : ''}`}
+                onClick={() => setActiveView('dashboard')}
+                title="Dashboard"
+              >
+                <i className="ph ph-squares-four"></i>
+              </button>
+              <button 
+                className={`view-toggle ${activeView === 'metrics' ? 'active' : ''}`}
+                onClick={() => setActiveView('metrics')}
+                title="Metrics"
+              >
+                <i className="ph ph-activity"></i>
+              </button>
+              <button 
+                className={`view-toggle ${activeView === 'data' ? 'active' : ''}`}
+                onClick={() => setActiveView('data')}
+                title="Data Sources"
+              >
+                <i className="ph ph-database"></i>
+              </button>
+              <button 
+                className={`view-toggle ${activeView === 'settings' ? 'active' : ''}`}
+                onClick={() => setActiveView('settings')}
+                title="Settings"
+              >
+                <i className="ph ph-gear"></i>
+              </button>
+            </aside>
+            
+            <main className="workspace">
+              {activeView === 'dashboard' && <DashboardView />}
+              {activeView !== 'dashboard' && (
+                <div className="empty-state">
+                  <h3>View Not Implemented</h3>
+                  <p>The {activeView} view is currently under construction.</p>
+                </div>
+              )}
+            </main>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
